@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+backend/venv/
+.env
+
+# Node/Frontend
+node_modules/
+physical-ai-book/node_modules/
+build/
+.docusaurus/
+.cache/
+
+# OS
+.DS_Store
+Thumbs.db
