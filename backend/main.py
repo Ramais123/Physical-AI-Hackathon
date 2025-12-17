@@ -1,86 +1,65 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
-from dotenv import load_dotenv
 import google.generativeai as genai
 from fastapi.responses import JSONResponse
 
-# 1. Setup
-load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+app = FastAPI()
 
+# --- 1. CORS FIX (Sabse Zaroori) ---
+# Rule: Agar Origins=["*"] hai, toh Credentials=False hona chahiye.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # Duniya ki har website allow
+    allow_credentials=False,  # Isay FALSE rakhna zaroori hai '*' ke sath
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- 2. SETUP ---
+api_key = os.getenv("GEMINI_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
 
-app = FastAPI()
+# --- 3. ROUTES ---
 
-# --- 2. BRUTE FORCE CORS (Jugaad) ---
-# Har request ke jawab mein zabardasti headers ghusana
-@app.middleware("http")
-async def add_cors_header(request: Request, call_next):
-    try:
-        response = await call_next(request)
-    except Exception as e:
-        # Agar code crash ho, tab bhi JSON bhejo taake CORS error na aye
-        response = JSONResponse(content={"error": str(e)}, status_code=500)
-    
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "*"
-    return response
+@app.get("/")
+def home():
+    return {"message": "✅ Brain is Online & CORS Fixed!"}
 
-# Preflight Requests (OPTIONS) ko manually handle karna
-@app.options("/{path:path}")
-async def options_handler(path: str):
-    return Response(
-        content="OK",
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-        },
-    )
+# Render Health Check (Jo logs mein 405 de raha tha, usay chup karane ke liye)
+@app.head("/")
+def health_check():
+    return {"status": "ok"}
 
-# --- Models ---
 class PersonalizeRequest(BaseModel):
     text: str
     hardware: str
 
-class TranslateRequest(BaseModel):
-    text: str
-
-class QueryRequest(BaseModel):
-    question: str
-
-# --- Routes ---
-@app.get("/")
-def home():
-    return {"message": "✅ Chatbot Brain is Online!"}
-
-@app.post("/chat")
-def chat_endpoint(request: QueryRequest):
-    # Dummy Chat (Agar Qdrant na ho)
-    return {"answer": "Chatbot is working! (Database connection checked)"}
-
 @app.post("/personalize")
-def personalize_endpoint(request: PersonalizeRequest):
+def personalize(request: PersonalizeRequest):
     try:
-        if not api_key: return {"personalized_text": "Error: API Key Missing"}
+        # Instruction logic
+        instruction = "Focus on Cloud/CPU simulation." if request.hardware == 'cpu' else "Focus on NVIDIA Isaac Sim & RTX."
+        prompt = f"Rewrite this textbook content. {instruction}\nOriginal:\n{request.text}"
         
-        instruction = "Cloud/CPU" if request.hardware == 'cpu' else "NVIDIA RTX"
-        prompt = f"Rewrite this: {instruction}\n{request.text}"
         response = model.generate_content(prompt)
         return {"personalized_text": response.text}
     except Exception as e:
-        return {"personalized_text": f"Error: {str(e)}"}
+        # Error ko bhi 200 OK banakar bhejo taake CORS na roke
+        return JSONResponse(status_code=200, content={"personalized_text": f"Error: {str(e)}"})
 
 @app.post("/translate")
-def translate_endpoint(request: TranslateRequest):
+def translate(request: BaseModel): # Generic model
     try:
-        if not api_key: return {"translated_text": "Error: API Key Missing"}
-        prompt = f"Translate to Urdu:\n{request.text}"
+        # Request body se text nikalna (Flexible handling)
+        data = request.dict()
+        text_content = data.get('text', '')
+        
+        prompt = f"Translate to Urdu:\n{text_content}"
         response = model.generate_content(prompt)
         return {"translated_text": response.text}
     except Exception as e:
-        return {"translated_text": f"Error: {str(e)}"}
+        return JSONResponse(status_code=200, content={"translated_text": "Translation Failed"})
