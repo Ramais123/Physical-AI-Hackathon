@@ -12,15 +12,19 @@ app = FastAPI()
 
 # --- CORS SETUP (Sabse Zaroori) ---
 # Hum Vercel aur Localhost dono ko ijazat de rahe hain
+# --- CORS SETUP (Bulletproof Method) ---
 origins = [
-    "*",  # Duniya ki har website ko allow karein (Hackathon ke liye safe hai)
+    "http://localhost:3000",  # Laptop ke liye
+    "https://physical-ai-hackathon.vercel.app",  # Main Domain
+    # Neeche wali line wo URL hai jo aapke screenshot mein thi:
+    "https://physical-ai-hackathon-x9cx-7swpbgacm.vercel.app" 
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=False,
-    allow_methods=["*"],  # Saare methods (GET, POST, OPTIONS) allow hain
+    allow_origins=origins,  # Ab hum specific list de rahe hain
+    allow_credentials=True, # Ab True rakhein, kyunke specific origin hai
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
