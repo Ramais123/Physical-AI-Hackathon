@@ -1,5 +1,4 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request, Response
 from pydantic import BaseModel
 import os
 import google.generativeai as genai
@@ -7,32 +6,46 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-# --- 1. SETUP API KEY ---
+# --- 1. SETUP API ---
 api_key = os.getenv("GEMINI_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
 
-# --- 2. CORS (Specific Origins Only) ---
-# Hum '*' nahi use karenge. Hum exact link denge.
-origins = [
-    "http://localhost:3000",                                      # Laptop Testing
-    "https://physical-ai-hackathon.vercel.app",                   # Main Website
-    "https://physical-ai-hackathon-x9cx-7swpbgacm.vercel.app"     # 👈 AAPKA VERCEL PREVIEW LINK (Jo error de raha tha)
-]
+# --- 2. THE NUCLEAR CORS FIX (Mirror Method) ---
+# Yeh middleware har request ke headers ko modify karega
+@app.middleware("http")
+async def cors_middleware(request: Request, call_next):
+    # Incoming Origin ko pakdo (e.g. https://vercel-app...)
+    origin = request.headers.get("origin")
+    
+    # Agar ye Preflight (OPTIONS) check hai, toh foran HAAN bol do
+    if request.method == "OPTIONS":
+        response = Response(status_code=200)
+    else:
+        # Asal request ko process karein
+        try:
+            response = await call_next(request)
+        except Exception as e:
+            response = JSONResponse(status_code=500, content={"error": str(e)})
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,    # Sirf in 3 links ko ijazat hai
-    allow_credentials=True,   # Ab hum TRUE rakh sakte hain kyunke specific links hain
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    # Ab Jawab mein headers chipka do
+    # Jo Origin aya tha, wapis wahi bhej do (Taake browser khush rahe)
+    if origin:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    else:
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        
+    response.headers["Access-Control-Allow-Credentials"] = "true" # Ab Credentials bhi allowed hain
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    
+    return response
 
 # --- 3. ROUTES ---
 @app.get("/")
 def home():
-    return {"message": "✅ Brain is Online (Specific Access Mode)"}
+    return {"message": "✅ Brain is Online (Mirror Mode)"}
 
 @app.head("/")
 def health_check():
@@ -56,7 +69,7 @@ def personalize(request: PersonalizeRequest):
 @app.post("/translate")
 def translate(request: BaseModel):
     try:
-        # Flexible handling for text
+        # Flexible Data Handling
         data = request.dict() if hasattr(request, 'dict') else {}
         text = getattr(request, 'text', data.get('text', ''))
         
