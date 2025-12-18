@@ -15,10 +15,14 @@ function Chatbot() {
     setInput(""); setLoading(true);
     try {
       // Note: Make sure yeh URL aapki Render wali hai
-      const res = await fetch("https://physical-ai-backend.onrender.com/chat", {
+      const res = await fetch("https://physical-ai-hackathon.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: userMsg }),
+        body: JSON.stringify
+        ({
+  text: text,
+  hardware: hw
+})
       });
       const data = await res.json();
       setMessages(prev => [...prev, { text: data.answer, sender: "bot" }]);
@@ -70,7 +74,7 @@ function ContentManager() {
     const originalText = article.innerText.substring(0, 3000); 
 
     try {
-      const res = await fetch(`https://physical-ai-backend.onrender.com${endpoint}`, {
+      const res = await fetch(`https://physical-ai-hackathon.onrender.com${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: originalText, ...payloadExtra }),
@@ -101,8 +105,21 @@ function ContentManager() {
         <option value="gpu">🚀 I have NVIDIA GPU (RTX)</option>
       </select>
       <div style={{ display: 'flex', gap: '5px' }}>
-        <button onClick={() => processContent('/personalize', { hardware })} disabled={loading} style={{ padding: '8px 15px', background: '#4ec9b0', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>{loading ? "..." : "⚡ Personalize"}</button>
-        <button onClick={() => processContent('/translate')} disabled={loading} style={{ padding: '8px 15px', background: '#ff6b6b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>🇮🇹 Urdu</button>
+<button
+  onClick={() => processContent('/personalize', { hardware })}
+  disabled={loading}
+  style={{ padding: '8px 15px', background: '#4ec9b0', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+>
+  {loading ? "..." : "⚡ Personalize"}
+</button>
+
+<button
+  onClick={() => processContent('/translate')}
+  disabled={loading}
+  style={{ padding: '8px 15px', background: '#ff6b6b', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}
+>
+</button>
+
       </div>
     </div>
   );

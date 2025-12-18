@@ -1,3 +1,4 @@
+/* Existing styles - DON'T REMOVE THESE */
 .features {
   display: flex;
   align-items: center;
@@ -8,4 +9,247 @@
 .featureSvg {
   height: 200px;
   width: 200px;
+}
+
+/* ============ NEW STYLES ADD FROM HERE ============ */
+
+/* Hero section buttons */
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* API Tester Section */
+.apiSection {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.apiHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.apiHeader h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.apiHeader p {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.urlDisplay {
+  background: #2d2d2d;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.testerContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 3rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* API Info Cards */
+.apiInfo {
+  margin-top: 4rem;
+}
+
+.apiInfo h3 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.apiInfo .card {
+  height: 100%;
+  border: 1px solid #eaeaea;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.apiInfo .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.apiInfo .card__header h4 {
+  margin: 0;
+  color: #3498db;
+}
+
+.apiInfo pre {
+  background: #f6f8fa;
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  border: 1px solid #e1e4e8;
+}
+
+/* Deployment Section */
+.deployment {
+  padding: 4rem 0;
+  background: #f8f9fa;
+}
+
+.deployment h2 {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #2c3e50;
+}
+
+.deployment .card {
+  height: 100%;
+  border: 1px solid #eaeaea;
+  transition: transform 0.3s ease;
+}
+
+.deployment .card:hover {
+  transform: translateY(-5px);
+}
+
+.deployment .card__header h3 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.deployment ul {
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.deployment li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.deployment strong {
+  color: #2c3e50;
+}
+
+/* Hero section (if you add it) */
+.hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 3rem;
+  border-radius: 0 0 20px 20px;
+}
+
+.hero__title {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .features {
+    padding: 1rem 0;
+  }
+  
+  .featureSvg {
+    height: 150px;
+    width: 150px;
+  }
+  
+  .apiHeader h2 {
+    font-size: 2rem;
+  }
+  
+  .apiHeader p {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  
+  .buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .urlDisplay {
+    font-size: 0.8rem;
+    margin: 1rem;
+    padding: 0.8rem;
+  }
+  
+  .testerContainer {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  
+  .hero {
+    padding: 2rem 1rem;
+  }
+  
+  .hero__title {
+    font-size: 2rem;
+  }
+  
+  .hero__subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .apiInfo .row,
+  .deployment .row {
+    flex-direction: column;
+  }
+  
+  .apiInfo .col,
+  .deployment .col {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Add this to styles.module.css */
+.heroSection {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: 3rem;
+  border-radius: 0 0 20px 20px;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
 }
